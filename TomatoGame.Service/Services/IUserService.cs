@@ -9,8 +9,8 @@ namespace TomatoGame.Service.Services
 {
     public interface IUserService
     {
-        Task<bool> SignUp(UserSignUp signUp);
+        Task<List<UserProfileDto>> GetUsers();
 
-        Task<bool> Login(LoginDataDto login);
+        Task<UserProfileDto> GetUser(int userId);
     }
 }

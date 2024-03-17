@@ -7,7 +7,7 @@ using TomatoGame.Service.Dto;
 
 namespace TomatoGame.Service.Services
 {
-    internal interface IScoreService
+    public interface IScoreService
     {
         Task<List<ScoreDto>> GetScores();
 

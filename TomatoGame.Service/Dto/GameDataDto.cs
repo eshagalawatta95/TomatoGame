@@ -13,9 +13,9 @@ namespace TomatoGame.Service.Dto
 
         public GameMode Mode { get; set; }
 
-        public string PuzzleImage { get; set; }
+        public string Question { get; set; }
 
-        public int PuzzleAnswer { get; set; }
+        public int Solution { get; set; }
 
     }
 }

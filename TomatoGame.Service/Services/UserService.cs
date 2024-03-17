@@ -1,22 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TomatoGame.Service.Dto;
+using TomatoGame.Storage;
 
 namespace TomatoGame.Service.Services
 {
-    public class UserService : IUserService
+    public class UserService: IUserService
     {
-        public Task<bool> Login(LoginDataDto login)
+        private readonly GameDbContext _context;
+
+        public UserService(GameDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task<bool> SignUp(UserSignUp signUp)
+        public async Task<List<UserProfileDto>> GetUsers()
         {
-            throw new NotImplementedException();
+            // Get all users and map them to UserProfileDto
+            var users = await _context.Users
+                .Select(u => new UserProfileDto
+                {
+                    Email = u.Email,
+                })
+                .ToListAsync();
+
+            return users;
+        }
+
+        public async Task<UserProfileDto> GetUser(int userId)
+        {
+            // Get a specific user by userId and map to UserProfileDto
+            var user = await _context.Users
+                .Where(u => u.Id == userId)
+                .Select(u => new UserProfileDto
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                })
+                .FirstOrDefaultAsync();
+
+            return user;
         }
     }
 }

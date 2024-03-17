@@ -15,5 +15,7 @@ namespace TomatoGame.Storage
         public int Mode { get; set; }
 
         public float LatestScore { get; set; }
+
+        public DateTime UpdatedTime { get; set; }
     }
 }
