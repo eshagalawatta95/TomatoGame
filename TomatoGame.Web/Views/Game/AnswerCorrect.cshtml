@@ -1,0 +1,10 @@
+﻿
+@{
+    ViewBag.Title = "AnswerCorrect";
+}
+
+<h2>Answer is correct. Click Next to next challange.</h2>
+@using (Html.BeginForm("Index", "Game", FormMethod.Get))
+{
+    <button type="submit">Next</button>
+}

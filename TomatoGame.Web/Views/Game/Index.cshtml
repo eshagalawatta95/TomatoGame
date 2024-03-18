@@ -1,7 +1,49 @@
-﻿
+﻿@model TomatoGame.Web.Models.UserAnswerViewModel
+<script>
+    // Check if ViewBag.CorrectAnswer is set to true (correct answer) or false (incorrect answer)
+    var isCorrectAnswer = @Html.Raw(Json.Encode(ViewBag.CorrectAnswer));
+
+    if (isCorrectAnswer) {
+        alert("Correct answer!");
+    } else {
+        var errorMessage = "@ViewBag.ErrorMessage";
+        if (errorMessage) {
+            alert(errorMessage);
+        }
+    }
+</script>
+
 @{
-    ViewBag.Title = "Index";
+    var image = ViewBag.GameData.Question as System.Drawing.Image;
+    if (image != null)
+    {
+        using (MemoryStream ms = new MemoryStream())
+        {
+            image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+            string base64Image = Convert.ToBase64String(ms.ToArray());
+            <img src="data:image/png;base64,@base64Image" alt="Image" />
+        }
+    }
 }
 
-<h2>Index</h2>
+@using (Html.BeginForm("CheckAnswer", "Game", FormMethod.Post))
+{
+    <div class="field input-field">
+        @Html.TextBoxFor(m => m.UserAnswer, new { @placeholder = "Answer", @class = "form-control" })
+        <input type="hidden" id="CorrectAnwser" name="CorrectAnwser" value="@ViewBag.GameData.Solution" />
+    </div>
+    <div class="field button-field">
+        <button type="submit">Check</button>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    </div>
 
+    if (ViewBag.Message != null)
+    {
+        <div class="alert alert-success">@ViewBag.Message</div>
+    }
+
+    if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+    }
+}

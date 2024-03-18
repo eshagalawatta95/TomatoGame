@@ -1,7 +1,10 @@
-﻿using System;
+﻿
+using Newtonsoft.Json;
+using System;
 using System.Configuration;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using TomatoGame.Service.Dto;
 using TomatoGame.Service.Enum;
@@ -40,7 +43,7 @@ namespace TomatoGame.Service.Services
             {
                 // Process the successful response
                 string content = await response.Content.ReadAsStringAsync();
-                var gameData = JsonSerializer.Deserialize<GameDataDto>(content);
+                var gameData = JsonConvert.DeserializeObject<GameDataDto>(content);
                 gameData.Mode = mode;
                 return gameData;
             }
