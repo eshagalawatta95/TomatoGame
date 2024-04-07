@@ -10,8 +10,8 @@ namespace TomatoGame.Service.Services
 {
     public interface IGameService
     {
-        Task<GameDataDto> ReStart(GameMode mode);
+        Task<GameDataDto> Start(GameMode mode);
 
-        Task<GameDataDto> Begin(GameMode mode);
+        Task<GameDataDto> ReStart(GameMode mode, int retryTime);
     }
 }

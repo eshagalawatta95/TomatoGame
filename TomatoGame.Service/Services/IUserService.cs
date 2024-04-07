@@ -11,6 +11,8 @@ namespace TomatoGame.Service.Services
     {
         Task<List<UserProfileDto>> GetUsers();
 
+        Task<UserProfileDto> GetUser(string email);
+
         Task<UserProfileDto> GetUser(int userId);
     }
 }

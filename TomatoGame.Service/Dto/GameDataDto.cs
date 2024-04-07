@@ -15,7 +15,17 @@ namespace TomatoGame.Service.Dto
 
         public string Question { get; set; }
 
+        public List<SolutionDataDto> Solutions { get; set; }
+
+        public int RetryTime { get; set; }
+
+    }
+
+    public class GameDataApiResponse
+    {
+        public string Question { get; set; }
         public int Solution { get; set; }
 
     }
+
 }

@@ -11,11 +11,13 @@ namespace TomatoGame.Service.Services
 {
     public class UserService: IUserService
     {
-        private readonly GameDbContext _context;
+        private readonly GameDbContext _context; 
+        private readonly IScoreService _scoreService;
 
-        public UserService(GameDbContext context)
+        public UserService(GameDbContext context, IScoreService scoreService)
         {
             _context = context;
+            _scoreService = scoreService;
         }
 
         public async Task<List<UserProfileDto>> GetUsers()
@@ -40,6 +42,23 @@ namespace TomatoGame.Service.Services
                 {
                     Id = u.Id,
                     Email = u.Email,
+                })
+                .FirstOrDefaultAsync();
+
+            return user;
+        }
+
+        public async Task<UserProfileDto> GetUser(string email)
+        {
+            var score = await _scoreService.GetScore(email);
+            // Get a specific user by userId and map to UserProfileDto
+            var user = await _context.Users
+                .Where(u => u.Email == email)
+                .Select(u => new UserProfileDto
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    LatestScore= score.LatestScore
                 })
                 .FirstOrDefaultAsync();
 

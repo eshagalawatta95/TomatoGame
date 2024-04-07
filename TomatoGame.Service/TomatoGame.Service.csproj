@@ -159,6 +159,7 @@
     <Compile Include="Dto\GameDataDto.cs" />
     <Compile Include="Dto\LoginDataDto.cs" />
     <Compile Include="Dto\ScoreDto.cs" />
+    <Compile Include="Dto\SolutionDataDto.cs" />
     <Compile Include="Dto\UserDto.cs" />
     <Compile Include="Dto\UserProfileDto.cs" />
     <Compile Include="Dto\UserSignUp.cs" />
@@ -174,7 +175,6 @@
     <Compile Include="Services\UserService.cs" />
     <Compile Include="Utils\EncryptAndDecrypter.cs" />
     <Compile Include="Utils\WebApiClient.cs" />
-    <Compile Include="Utils\Mappers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

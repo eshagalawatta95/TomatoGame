@@ -1,10 +1,9 @@
-﻿
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Net.Http;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using TomatoGame.Service.Dto;
 using TomatoGame.Service.Enum;
@@ -14,21 +13,20 @@ namespace TomatoGame.Service.Services
 {
     public class GameService : IGameService
     {
-        public int RetryTime { get; private set; }
+        private readonly int _wrongAnswerCount = 3;
 
-        public async Task<GameDataDto> Begin(GameMode mode)
+        public async Task<GameDataDto> Start(GameMode mode)
         {
-            return await StartgameAsync(mode);
+            //initially we set try count as 1
+            return await StartgameAsync(mode, 1);
         }
 
-        public async Task<GameDataDto> ReStart(GameMode mode)
+        public async Task<GameDataDto> ReStart(GameMode mode, int retryTime)
         {
-            RetryTime++;
-            return await StartgameAsync(mode);
+            return await StartgameAsync(mode, retryTime);
         }
 
-        private async Task<GameDataDto> StartgameAsync(GameMode mode)
-
+        private async Task<GameDataDto> StartgameAsync(GameMode mode, int retryTime)
         {
             var baseUri = ConfigurationManager.AppSettings["GameBaseUri"];
             var httpClientInstance = new WebApiClient();
@@ -43,9 +41,10 @@ namespace TomatoGame.Service.Services
             {
                 // Process the successful response
                 string content = await response.Content.ReadAsStringAsync();
-                var gameData = JsonConvert.DeserializeObject<GameDataDto>(content);
-                gameData.Mode = mode;
-                return gameData;
+                var gameData = JsonConvert.DeserializeObject<GameDataApiResponse>(content);
+
+                var gameDto = CreateGameDataDto(gameData, mode, retryTime);
+                return gameDto;
             }
             else
             {
@@ -53,6 +52,60 @@ namespace TomatoGame.Service.Services
                 Console.WriteLine($"Failed to fetch data. Status code: {response.StatusCode}");
                 throw new HttpRequestException("Please try Again");
             }
+        }
+
+        private GameDataDto CreateGameDataDto(GameDataApiResponse gameData, GameMode mode, int retryTime)
+        {
+            var gameDto = new GameDataDto
+            {
+                Question = gameData.Question,
+                Mode = mode,
+                RetryTime = retryTime,
+                Solutions = CreateSolutions(gameData.Solution)
+            };
+            return gameDto;
+        }
+
+        private List<SolutionDataDto> CreateSolutions(int solution)
+        {
+            var solutions = new List<SolutionDataDto>
+            {
+                // Add correct answer
+                new SolutionDataDto
+                {
+                    Answer = solution,
+                    IsCorrectAnswer = true
+                }
+            };
+
+            // Add wrong answers
+            solutions.AddRange(ConstructWrongAnswers(solution));
+            return solutions;
+        }
+
+        private List<SolutionDataDto> ConstructWrongAnswers(int solution)
+        {
+            var wrongAnswers = new List<SolutionDataDto>();
+            var exclude = new HashSet<int> { solution };
+
+            for (int j = 0; j < _wrongAnswerCount; j++)
+            {
+                wrongAnswers.Add(new SolutionDataDto
+                {
+                    Answer = GiveMeANumber(exclude),
+                    IsCorrectAnswer = false
+                });
+            }
+            return wrongAnswers;
+        }
+
+        private int GiveMeANumber(HashSet<int> exclude)
+        {
+            var range = Enumerable.Range(1, 20).Where(i => !exclude.Contains(i));
+
+            var rand = new Random();
+            int index = rand.Next(0, 20 - exclude.Count);
+            return range.ElementAt(index);
         }
     }
 }

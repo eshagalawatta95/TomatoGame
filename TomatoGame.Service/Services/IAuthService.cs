@@ -8,15 +8,5 @@ namespace TomatoGame.Service.Services
         Task<bool> SignUp(UserSignUp signUp);
 
         Task<bool> Login(LoginDataDto login);
-
-
-        Task<bool> SignUpWithGoogle(UserSignUp signUp);
-
-        Task<bool> LoginWithGoogle(LoginDataDto login);
-
-
-        Task<bool> SignUpWithFaceBook(UserSignUp signUp);
-
-        Task<bool> LoginWithFaceBook(LoginDataDto login);
     }
 }

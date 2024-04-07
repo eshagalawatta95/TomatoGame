@@ -53,25 +53,5 @@ namespace TomatoGame.Service.Services
             var isPasswordCorrect = EncryptAndDecrypter.VerifyPassword(login.Password, userObj.Password);
             return isPasswordCorrect;
         }
-
-        public Task<bool> SignUpWithGoogle(UserSignUp signUp)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> LoginWithGoogle(LoginDataDto login)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> SignUpWithFaceBook(UserSignUp signUp)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> LoginWithFaceBook(LoginDataDto login)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

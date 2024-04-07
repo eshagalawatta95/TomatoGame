@@ -5,9 +5,10 @@ using System.Web;
 
 namespace TomatoGame.Web.Models
 {
-    public class UserAnswerViewModel
+    public class SolutionViewModel
     {
-        public int UserAnswer { get; set; }
-        public int CorrectAnwser { get; set; }
+        public int Answer { get; set; }
+
+        public bool IsCorrectAnswer { get; set; }
     }
 }

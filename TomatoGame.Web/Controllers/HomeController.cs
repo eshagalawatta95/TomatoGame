@@ -1,31 +1,28 @@
-﻿using Microsoft.Ajax.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
+﻿using System.Threading.Tasks;
 using System.Web.Mvc;
 using TomatoGame.Service.Dto;
 using TomatoGame.Service.Services;
+using TomatoGame.Storage;
 using TomatoGame.Web.Models;
-using Autofac;
-using Autofac.Integration.Mvc;
 
 namespace TomatoGame.Web.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IAuthService _authService;
+        private readonly IUserService _userService;
 
-        public HomeController(IAuthService authService)
+        public HomeController(IAuthService authService, IUserService userService)
         {
             _authService = authService;
+            _userService = userService;
         }
 
         public ActionResult Index()
         {
             return View();
         }
+
 
         [HttpPost]
         public async Task<ActionResult> LoginAsync(UserSignInSignUpViewModal model)
@@ -39,6 +36,11 @@ namespace TomatoGame.Web.Controllers
             if (isAuthenticated)
             {
                 // Redirect to the dashboard or home page upon successful login
+                var user = await _userService.GetUser(model.Email);
+                Session["UserID"] = user.Id.ToString();
+                Session["UserName"] = user.Name.ToString();
+                Session["UserScore"] = user.LatestScore.ToString();
+
                 return RedirectToAction("Index", "Game");
             }
             else
@@ -47,6 +49,16 @@ namespace TomatoGame.Web.Controllers
                 ModelState.AddModelError("", "Invalid email or password");
                 return View("Index", model);
             }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> LogOffAsync()
+        {
+            //clear session variables
+            Session["UserID"] = string.Empty;
+            Session["UserName"] = string.Empty;
+            Session["UserScore"] = string.Empty;
+            return View("Index");
         }
 
         [HttpPost]
