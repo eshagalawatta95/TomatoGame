@@ -9,14 +9,14 @@ namespace TomatoGame.Web
 {
     public class GoogleController : Controller
     {
-        //private readonly string clientId = "223825968887-2ut3vn0ph4juak6k4brcjts848ho3uor.apps.googleusercontent.com";
-        //private readonly string clientSecret = "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";
+        private readonly string clientId = "223825968887-2ut3vn0ph4juak6k4brcjts848ho3uor.apps.googleusercontent.com";
+        private readonly string clientSecret = "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";
 
         // GET: /Google/SignIn
         public ActionResult Index()
         {
-            //GoogleConnect.ClientId = "223825968887-2ut3vn0ph4juak6k4brcjts848ho3uor.apps.googleusercontent.com";
-            //GoogleConnect.ClientSecret = "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";
+            GoogleConnect.ClientId = "223825968887-2ut3vn0ph4juak6k4brcjts848ho3uor.apps.googleusercontent.com";
+            GoogleConnect.ClientSecret = "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";
             GoogleConnect.RedirectUri = Request.Url.AbsoluteUri.Split('?')[0];
 
             GoogleProfileModelViewModel profile = new GoogleProfileModelViewModel();
