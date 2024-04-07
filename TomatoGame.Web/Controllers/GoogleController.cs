@@ -3,17 +3,26 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using TomatoGame.Service.Dto;
+using TomatoGame.Service.Services;
 using TomatoGame.Web.Models;
 
 namespace TomatoGame.Web
 {
     public class GoogleController : Controller
     {
-        private readonly string clientId = "223825968887-2ut3vn0ph4juak6k4brcjts848ho3uor.apps.googleusercontent.com";
-        private readonly string clientSecret = "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";
+        private readonly IAuthService _authService;
+        private readonly IUserService _userService;
+
+        public GoogleController(IAuthService authService, IUserService userService)
+        {
+            _authService = authService;
+            _userService = userService;
+
+        }
 
         // GET: /Google/SignIn
-        public ActionResult Index()
+        public GoogleProfileModelViewModel GetGoogleAuthData()
         {
             GoogleConnect.ClientId = "223825968887-2ut3vn0ph4juak6k4brcjts848ho3uor.apps.googleusercontent.com";
             GoogleConnect.ClientSecret = "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";
@@ -29,14 +38,41 @@ namespace TomatoGame.Web
                 profile.IsDisable = true;
             }
 
-            return View(profile);
+            return profile;
         }
 
-        [HttpGet]
-        public ActionResult Login()
+        [HttpPost]
+        public async Task<ActionResult> Login()
         {
             GoogleConnect.Authorize("profile", "email");
-            return RedirectToAction("Index");
+            var data = GetGoogleAuthData();
+            if (!string.IsNullOrEmpty(data?.Email))
+            {
+                await AddUserToSystemIfNotExistAsync(data);
+                var user = await _userService.GetUser(data.Email);
+                Session["UserID"] = user.Email;
+                Session["UserName"] = user.Name;
+                Session["UserScore"] = user.LatestScore;
+
+                // Redirect to the dashboard or home page upon successful login
+                return RedirectToAction("Index", "Game");
+            }
+
+            // Move the return View() outside of the if block
+            return View();
+        }
+
+        private async Task AddUserToSystemIfNotExistAsync(GoogleProfileModelViewModel data)
+        {
+            var user = await _userService.GetUser(data.Email);
+            if (user == null)
+            {
+                await _authService.SignUp(new UserSignUp()
+                {
+                    Email = data.Email,
+                    Name = data.Name,
+                });
+            }
         }
     }
 }

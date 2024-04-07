@@ -50,13 +50,13 @@
             </div>
 
             <div class="line"></div>
-
-            <div class="media-options">
-                <a href="@Url.Action("Login", "Google")" class="field google">
-                    <img src="#" alt="" class="google-img">
-                    <span>Login with Google</span>
-                </a>
-            </div>
+            @using (Html.BeginForm("Login", "Google", FormMethod.Post))
+            {
+              
+                <div class="media-options">
+                    <button type="submit">  <img src="#" alt="" class="google-img">Login with Google</button>
+                </div>
+            }
 
         </div>
 
