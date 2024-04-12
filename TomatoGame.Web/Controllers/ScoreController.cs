@@ -1,6 +1,8 @@
-﻿using System.Web.Mvc;
+﻿using System.Threading.Tasks;
+using System.Web.Mvc;
 using TomatoGame.Service.Services;
 using TomatoGame.Web.Attributes;
+using TomatoGame.Web.Models;
 
 namespace TomatoGame.Web.Controllers
 {
@@ -15,10 +17,17 @@ namespace TomatoGame.Web.Controllers
             _scoreService = scoreService;
         }
 
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            var scores = _scoreService.GetScores();
-            return View(scores);
+            var scores = await _scoreService.GetScores();
+            var vm = scores.ConvertAll(score => new ScoreViewModel
+            {
+                UserName = score.UserName,
+                UpdatedDate = score.UpdatedDate,
+                LatestScore = score.LatestScore,
+                Mode = score.Mode,
+            });
+            return View(vm);
         }
     }
 }

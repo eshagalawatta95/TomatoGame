@@ -1,7 +1,59 @@
-﻿
+﻿@model List<TomatoGame.Web.Models.ScoreViewModel>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 @{
     ViewBag.Title = "Index";
 }
+<h2>Scores</h2>
 
-<h2>Index</h2>
 
+@if (Model.Count == 0)
+{
+    <h5>No any scores</h5>
+}
+else
+{
+    <table>
+        <tr>
+            <th width="20px">Rank</th>
+            <th width="120px">Name</th>
+            <th width="50px">Mode</th>
+            <th width="50px">Score</th>
+            <th>Last Updated</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            int rank = 1;
+
+            <tr>
+                <td>@rank</td>
+                <td>@item.UserName</td>
+                <td>@item.Mode</td>
+                <td>@item.LatestScore</td>
+                <td>@item.UpdatedDate</td>
+            </tr>
+            rank++;
+        }
+    </table>
+}
+
+<br>
+<br>
+
+
+<button id="homeButton">Home</button>
+
+
+<script>
+    $(document).ready(function () {
+
+
+        var homeButton = document.getElementById('homeButton');
+        if (homeButton) {
+            homeButton.addEventListener('click', function () {
+                window.location.href = '/Game/Index';
+            });
+        }
+    });
+</script>

@@ -15,7 +15,7 @@ namespace TomatoGame.Service.Services
 
         Task<bool> UpdateScore(ScoreDto score);
 
-        ScoreDto GetHighScore();
+        Task<ScoreDto> GetHighScoreAsync();
 
     }
 }

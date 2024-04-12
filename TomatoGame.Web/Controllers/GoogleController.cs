@@ -50,7 +50,7 @@ namespace TomatoGame.Web
             {
                 await AddUserToSystemIfNotExistAsync(data);
                 var user = await _userService.GetUser(data.Email);
-                Session["UserID"] = user.Email;
+                Session["UserID"] = user.Id;
                 Session["UserName"] = user.Name;
                 Session["UserScore"] = user.LatestScore;
 

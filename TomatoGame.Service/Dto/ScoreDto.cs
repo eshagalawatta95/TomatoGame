@@ -19,7 +19,7 @@ namespace TomatoGame.Service.Dto
 
         public GameMode Mode { get; set; }
 
-        public float LatestScore { get; set; }
+        public double LatestScore { get; set; }
 
         public DateTime UpdatedDate { get; set; }
     }

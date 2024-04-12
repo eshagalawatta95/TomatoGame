@@ -18,15 +18,10 @@ namespace TomatoGame.Service.Services
         public async Task<GameDataDto> Start(GameMode mode)
         {
             //initially we set try count as 1
-            return await StartgameAsync(mode, 1);
+            return await StartgameAsync(mode);
         }
 
-        public async Task<GameDataDto> ReStart(GameMode mode, int retryTime)
-        {
-            return await StartgameAsync(mode, retryTime);
-        }
-
-        private async Task<GameDataDto> StartgameAsync(GameMode mode, int retryTime)
+        private async Task<GameDataDto> StartgameAsync(GameMode mode)
         {
             var baseUri = ConfigurationManager.AppSettings["GameBaseUri"];
             var httpClientInstance = new WebApiClient();
@@ -43,7 +38,7 @@ namespace TomatoGame.Service.Services
                 string content = await response.Content.ReadAsStringAsync();
                 var gameData = JsonConvert.DeserializeObject<GameDataApiResponse>(content);
 
-                var gameDto = CreateGameDataDto(gameData, mode, retryTime);
+                var gameDto = CreateGameDataDto(gameData, mode);
                 return gameDto;
             }
             else
@@ -54,13 +49,12 @@ namespace TomatoGame.Service.Services
             }
         }
 
-        private GameDataDto CreateGameDataDto(GameDataApiResponse gameData, GameMode mode, int retryTime)
+        private GameDataDto CreateGameDataDto(GameDataApiResponse gameData, GameMode mode)
         {
             var gameDto = new GameDataDto
             {
                 Question = gameData.Question,
                 Mode = mode,
-                RetryTime = retryTime,
                 Solutions = CreateSolutions(gameData.Solution)
             };
             return gameDto;
@@ -88,24 +82,25 @@ namespace TomatoGame.Service.Services
             var wrongAnswers = new List<SolutionDataDto>();
             var exclude = new HashSet<int> { solution };
 
-            for (int j = 0; j < _wrongAnswerCount; j++)
+            Random rand = new Random();
+
+            while (wrongAnswers.Count < _wrongAnswerCount)
             {
-                wrongAnswers.Add(new SolutionDataDto
+                int randomAnswer = rand.Next(1, 21); // Generate a random number between 1 and 20
+
+                if (!exclude.Contains(randomAnswer))
                 {
-                    Answer = GiveMeANumber(exclude),
-                    IsCorrectAnswer = false
-                });
+                    wrongAnswers.Add(new SolutionDataDto
+                    {
+                        Answer = randomAnswer,
+                        IsCorrectAnswer = false
+                    });
+                    exclude.Add(randomAnswer);
+                }
             }
+
             return wrongAnswers;
         }
-
-        private int GiveMeANumber(HashSet<int> exclude)
-        {
-            var range = Enumerable.Range(1, 20).Where(i => !exclude.Contains(i));
-
-            var rand = new Random();
-            int index = rand.Next(0, 20 - exclude.Count);
-            return range.ElementAt(index);
-        }
     }
-}
+
+    }

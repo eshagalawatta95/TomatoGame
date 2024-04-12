@@ -205,6 +205,7 @@
     <Compile Include="Models\GameOverViewModel.cs" />
     <Compile Include="Models\GoogleProfileModelViewModel.cs" />
     <Compile Include="Models\RightAnswerViewModel.cs" />
+    <Compile Include="Models\ScoreViewModel.cs" />
     <Compile Include="Models\SolutionViewModel.cs" />
     <Compile Include="Models\UserSignInSignUpViewModal.cs" />
     <Compile Include="Models\WrongAnswerViewModel.cs" />

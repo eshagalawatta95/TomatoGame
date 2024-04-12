@@ -11,7 +11,7 @@ namespace TomatoGame.Web.Models
     {
         public GameMode Mode { get; set; }
 
-        public Image Question { get; set; }
+        public string Question { get; set; }
 
         public List<SolutionViewModel> Solutions { get; set; }
 
@@ -24,5 +24,7 @@ namespace TomatoGame.Web.Models
         public int UserId { get; set; }
 
         public int UserScore { get; set; }
+
+        public bool IsGameOver { get; set; }
     }
 }

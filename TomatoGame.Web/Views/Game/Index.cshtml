@@ -1,49 +1,192 @@
-﻿@model TomatoGame.Web.Models.UserAnswerViewModel
+﻿<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+<div id="gameMode-div">
+    <button id="easyBtn" type="button">Easy</button>
+    <button id="mediumBtn" type="button">Medium</button>
+    <button id="hardBtn" type="button">Hard</button>
+
+</div>
+
+<div id="gameArea-div" style="display: none;">
+    <div id="timer"></div>
+    <div id="scoreDisplay"></div>
+    <div id="imageContainer"></div>
+    <div id="buttonContainer"></div>
+    <br>    <br>
+    <button id="homeButton">Home</button>
+    <button id="scoreboardButton">Scoreboard</button>
+</div>
+
 <script>
-    // Check if ViewBag.CorrectAnswer is set to true (correct answer) or false (incorrect answer)
-    var isCorrectAnswer = @Html.Raw(Json.Encode(ViewBag.CorrectAnswer));
+    $(document).ready(function () {
+        // Event handler for the Easy button
+        $('#easyBtn').click(function () {
+            startGame('1');
+        });
 
-    if (isCorrectAnswer) {
-        alert("Correct answer!");
-    } else {
-        var errorMessage = "@ViewBag.ErrorMessage";
-        if (errorMessage) {
-            alert(errorMessage);
+        // Event handler for the Medium button
+        $('#mediumBtn').click(function () {
+            startGame('2');
+        });
+
+        // Event handler for the Hard button
+        $('#hardBtn').click(function () {
+            startGame('3');
+        });
+
+        var homeButton = document.getElementById('homeButton');
+        if (homeButton) {
+            homeButton.addEventListener('click', function () {
+                window.location.href = 'Index';
+            });
+        }
+
+        // Scoreboard button click handler
+        var scoreboardButton = document.getElementById('scoreboardButton');
+        if (scoreboardButton) {
+            scoreboardButton.addEventListener('click', function () {
+                window.location.href = '/Score/Index';
+            });
+        }
+    });
+
+    function startGame(gameMode) {
+
+        localStorage.setItem('gameMode', gameMode);
+        localStorage.setItem('tryCount', 0);
+        localStorage.setItem('score', 0);
+
+        $.ajax({
+            url: '/Game/Start',
+            type: 'GET',
+            data: { mode: gameMode },
+            success: function (response) {
+                // Start the game timer with a duration of 5 minutes
+                startGameTimer(response.AnswerTimeInMinits);
+
+                drawQuestionAndAnswers(response);
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    }
+
+    function drawQuestionAndAnswers(response) {
+
+        $('#gameMode-div').hide();
+        $('#gameArea-div').show();
+        // Create an <img> element and set its source to the image data
+        var imgElement = $('<img>').attr('src', response.Question);
+        // Append the <img> element to the 'imageContainer' div
+        $('#imageContainer').empty().append(imgElement);
+        $('#buttonContainer').empty();
+        var btn = response.Solutions;
+        btn.forEach(function (button) {
+            // Create a new button element
+            var newButton = $('<button class="btn-lg" onclick = CheckAnswer(' + button.IsCorrectAnswer +')>' + button.Answer +'</button>', {
+            });
+            $('#buttonContainer').append(newButton);
+        });
+    }
+
+    function CheckAnswer(isCorrect) {
+        if (isCorrect) {
+            alert('Answer Correct!!!')
+            var scoreAsString = localStorage.getItem('score');
+
+            // Convert the score string to a number
+            var score = parseInt(scoreAsString, 10);
+
+            // Check if the conversion was successful (not NaN)
+            if (!isNaN(score)) {
+                // Add 10 to the score
+                score += 10;
+            }
+
+            localStorage.setItem('score', score);
+            localStorage.setItem('tryCount', 0);
+
+            var scoreDisplayElement = document.getElementById('scoreDisplay');
+            if (scoreDisplayElement) {
+                scoreDisplayElement.textContent = 'Score: ' + score;
+            }
+
+            var gameMode = localStorage.getItem('gameMode');
+            $.ajax({
+                url: '/Game/Start',
+                type: 'GET',
+                data: { mode: gameMode },
+                success: function (response) {
+                    drawQuestionAndAnswers(response);
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+        else {
+          
+            var tryCount = localStorage.getItem('tryCount');
+            tryCount++
+            localStorage.setItem('tryCount', tryCount);
+
+            if (tryCount >= 3) {
+                saveHighScore();
+                alert('Game Over.')
+                window.location.href = '/Game/Index';
+            }
+            else {
+                alert('Please Try Again.')
+            }
+          
         }
     }
+
+    function saveHighScore() {
+        var gameMode = localStorage.getItem('gameMode');
+        var score = localStorage.getItem('score');
+
+        $.ajax({
+            url: '/Game/SaveHighScore',
+            type: 'PoST',
+            data: { mode: gameMode, scoreValue: score },
+            success: function (response) {
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    }
+
+    function startGameTimer(durationInMinutes) {
+        var durationInMillis = durationInMinutes * 60 * 1000; // Convert minutes to milliseconds
+        var endTime = Date.now() + durationInMillis; // Calculate the end time
+
+        var timerElement = document.getElementById('timer');
+
+        var timerInterval = setInterval(function () {
+            var remainingTime = endTime - Date.now(); // Calculate the remaining time
+            if (remainingTime <= 0) {
+                clearInterval(timerInterval); // Stop the timer when time is up
+                gameOver();
+                timerElement.textContent = 'Game Over!';
+            } else {
+                var minutes = Math.floor((remainingTime / (1000 * 60)) % 60);
+                var seconds = Math.floor((remainingTime / 1000) % 60);
+                timerElement.textContent = 'Time Remaining: ' + minutes + 'm ' + seconds + 's';
+            }
+        }, 1000); // Update every second
+    }
+
+    function gameOver() {
+        saveHighScore();
+        alert('Game Over.')
+        window.location.href = '/Game/Index';
+    }
+
+
+
+
 </script>
-
-@{
-    var image = ViewBag.GameData.Question as System.Drawing.Image;
-    if (image != null)
-    {
-        using (MemoryStream ms = new MemoryStream())
-        {
-            image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-            string base64Image = Convert.ToBase64String(ms.ToArray());
-            <img src="data:image/png;base64,@base64Image" alt="Image" />
-        }
-    }
-}
-
-@using (Html.BeginForm("CheckAnswer", "Game", FormMethod.Post))
-{
-    <div class="field input-field">
-        @Html.TextBoxFor(m => m.UserAnswer, new { @placeholder = "Answer", @class = "form-control" })
-        <input type="hidden" id="CorrectAnwser" name="CorrectAnwser" value="@ViewBag.GameData.Solution" />
-    </div>
-    <div class="field button-field">
-        <button type="submit">Check</button>
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    </div>
-
-    if (ViewBag.Message != null)
-    {
-        <div class="alert alert-success">@ViewBag.Message</div>
-    }
-
-    if (ViewBag.ErrorMessage != null)
-    {
-        <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
-    }
-}

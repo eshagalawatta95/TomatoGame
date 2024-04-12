@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using TomatoGame.Service.Dto;
@@ -18,8 +15,6 @@ namespace TomatoGame.Web.Controllers
     {
         private readonly IGameService _gameService;
         private readonly IScoreService _scoreService;
-        private readonly int _gameOverRetryCount = 3;
-        private readonly string _gameOverMessage = "Game Over !!!. Please try again";
 
         public GameController(IGameService gameService, IScoreService scoreService)
         {
@@ -27,84 +22,45 @@ namespace TomatoGame.Web.Controllers
             _scoreService = scoreService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult> Index(GameMode gameMode)
+        public ActionResult Index()
         {
-            return await GameAction(gameMode);
+            return View();
         }
 
         [HttpGet]
-        public async Task<ActionResult> Retry(GameMode gameMode, int retryTime, int scoreValue, int userId)
+        public async Task<JsonResult> Start(GameMode mode)
         {
-            if (retryTime == _gameOverRetryCount) //game over
-            {
-                SaveHighScore(userId, gameMode, scoreValue);
-                return View(new GameOverViewModel()
-                {
-                    Message = _gameOverMessage
-                });
-            }
-            return await GameAction(gameMode, retryTime);  //retry
+            var gameData = await GameAction(mode);
+            return Json(gameData, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public async Task<ActionResult> TimeIsOver(GameMode gameMode, int scoreValue, int userId)
+        public void SaveHighScore(GameMode mode, int scoreValue)
         {
-            SaveHighScore(userId, gameMode, scoreValue);
-            return View(new GameOverViewModel()
-            {
-                Message = _gameOverMessage
-            });
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> CheckAnswer(GameDataViewModel model)
-        {
-            var correctAnswer = model.Solutions.Where(x=>x.IsCorrectAnswer).First().Answer;
-            bool isCorrectAnswer = correctAnswer == model.UserAnswer;
-
-            if (isCorrectAnswer)
-            {
-                return View(new RightAnswerViewModel());
-            }
-            else {
-                return View(new WrongAnswerViewModel());
-            }
-        }
-
-        private void SaveHighScore(int userId, GameMode gameMode, int scoreValue)
-        {
+            int userId = 0;
+            int.TryParse(Session["UserID"].ToString(), out userId);
             var score = new ScoreDto()
             {
                 LatestScore = scoreValue,
-                Mode = gameMode,
+                Mode = mode,
                 UserId = userId,
                 UpdatedDate = DateTime.UtcNow,
             };
             _scoreService.UpdateScore(score);
         }
 
-        private async Task<ActionResult> GameAction(GameMode gameMode, int? retryTime = null)
+        private async Task<GameDataViewModel> GameAction(GameMode gameMode)
         {
-            GameDataDto gameData;
-            if (retryTime.HasValue)
-            {
-                gameData = await _gameService.ReStart(gameMode, retryTime.Value);
-            }
-            else
-            {
-                gameData = await _gameService.Start(gameMode);
-            }
-
+            var gameData = await _gameService.Start(gameMode);
             var vm = new GameDataViewModel()
             {
                 Mode = gameData.Mode,
-                Question = Base64StringToImage(gameData.Question),
+                Question = ToBase64String(gameData.Question),
                 RetryTime = gameData.RetryTime,
                 Solutions = CreateSolutionsVm(gameData.Solutions),
                 AnswerTimeInMinits = GetAnswerTimeInMinutes(gameMode)
             };
-            return View(vm);
+            return vm;
         }
 
         private int GetAnswerTimeInMinutes(GameMode mode)
@@ -141,17 +97,29 @@ namespace TomatoGame.Web.Controllers
 
                 solutionsVm.Add(solutionVm);
             }
+            Shuffle(solutionsVm);
             return solutionsVm;
         }
 
-        private Image Base64StringToImage(string base64String)
+        private void Shuffle(List<SolutionViewModel> solutionsVm)
         {
-            byte[] imageBytes = Convert.FromBase64String(base64String);
-            using (MemoryStream ms = new MemoryStream(imageBytes))
+            // Shuffle the solutionsVm list using Fisher-Yates shuffle algorithm
+            Random rng = new Random();
+            int n = solutionsVm.Count;
+            while (n > 1)
             {
-                Image image = Image.FromStream(ms);
-                return image;
+                n--;
+                int k = rng.Next(n + 1);
+                SolutionViewModel value = solutionsVm[k];
+                solutionsVm[k] = solutionsVm[n];
+                solutionsVm[n] = value;
             }
+        }
+
+        private string ToBase64String(string base64String)
+        {
+            string imageUrl = "data:image/jpeg;base64," + base64String;
+            return imageUrl;
         }
     }
 }

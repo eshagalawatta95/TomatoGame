@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading.Tasks;
 using TomatoGame.Service.Dto;
+using TomatoGame.Service.Enum;
 using TomatoGame.Storage;
 
 namespace TomatoGame.Service.Services
@@ -21,18 +23,27 @@ namespace TomatoGame.Service.Services
 
         public async Task<List<ScoreDto>> GetScores()
         {
-            var query = ReadScoreTable();
-            var scores = await query.ToListAsync();
+            var scores = await ReadScoreTable().ToListAsync();
             return scores;
         }
 
         public async Task<ScoreDto> GetScore(string email)
         {
             var user = await _context.Users.FirstOrDefaultAsync(s => s.Email == email);
-            if (user == null)
+            if (user != null)
             {
-                var scores = ReadScoreTable();
-                var userScore = scores.Where(x => x.UserId == user.Id).FirstOrDefault();
+                var scores = await ReadScoreTable().ToListAsync();
+                var userScore = scores.FirstOrDefault(x => x.UserId == user.Id);
+                if (userScore == null)
+                {
+                    return new ScoreDto()
+                    {
+                        LatestScore= 0,
+                        UserId= user.Id,
+                        UserName= user.Name,
+                        UserEmail= email,
+                    };
+                }
                 return userScore;
             }
             throw new InvalidOperationException($"User not found for {email}");
@@ -46,8 +57,8 @@ namespace TomatoGame.Service.Services
             {
                 existingScore.LatestScore = score.LatestScore;
                 existingScore.UpdatedTime = score.UpdatedDate;
+                _context.Scores.AddOrUpdate(existingScore);
                 await _context.SaveChangesAsync();
-                return true;
             }
             else
             {
@@ -63,30 +74,29 @@ namespace TomatoGame.Service.Services
             return true;
         }
 
-        public ScoreDto GetHighScore()
+        public async Task<ScoreDto> GetHighScoreAsync()
         {
-            var query = ReadScoreTable();
-            var highScore = query.FirstOrDefault();
+            var scores = await ReadScoreTable().ToListAsync();
+            var highScore = scores.FirstOrDefault();
             return highScore;
         }
 
         private IQueryable<ScoreDto> ReadScoreTable()
         {
-            var scores = _context.Scores
-                .Join(_context.Users, score => score.UserId, user => user.Id,
-                    (score, user) => new ScoreDto
-                    {
-                        UserEmail = user.Email,
-                        LatestScore = score.LatestScore,
-                        UserName = user.Name,
-                        Id = score.Id,
-                        Mode = (Enum.GameMode)score.Mode,
-                        UpdatedDate = score.UpdatedTime
-                    })
-                .OrderByDescending(x => x.LatestScore)
-                .AsNoTracking();
+            var scores = from score in _context.Scores
+                         join user in _context.Users on score.UserId equals user.Id
+                         select new ScoreDto
+                         {
+                             UserEmail = user.Email,
+                             LatestScore = score.LatestScore,
+                             UserName = user.Name,
+                             Id = score.Id,
+                             Mode = (Enum.GameMode)score.Mode,
+                             UpdatedDate = score.UpdatedTime
+                         };
 
             return scores;
         }
+
     }
 }
