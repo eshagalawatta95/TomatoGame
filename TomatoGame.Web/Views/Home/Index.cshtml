@@ -13,6 +13,8 @@
     <link href="~/Content/Site.css" rel="stylesheet" />
     <!-- Boxicons CSS -->
     <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="223825968887-2ut3vn0ph4juak6k4brcjts848ho3uor.apps.googleusercontent.com">
 
 </head>
 <body>
@@ -33,22 +35,20 @@
                     <div class="field button-field">
                         <button type="submit">Login</button>
                     </div>
-                  
-                  </form>
 
-                    <div class="form-link">
-                        <span>Don't have an account? <a href="#" class="link signup-link">Signup</a></span>
-                    </div>
+                </form>
+
+                <div class="form-link">
+                    <span>Don't have an account? <a href="#" class="link signup-link">Signup</a></span>
+                </div>
             </div>
 
             <div class="line"></div>
-            @using (Html.BeginForm("Login", "Google", FormMethod.Post))
-            {
 
-                <div class="media-options">
-                    <button type="submit"> Login with Google</button>
-                </div>
-            }
+            <div class="g-signin2" data-onsuccess="onSignIn" data-width="240" data-height="50" data-longtitle="true">
+                <button id="signinButton">Sign in with Google</button>
+
+            </div>
 
         </div>
 
@@ -84,17 +84,6 @@
                 </div>
             </div>
 
-            <div class="line"></div>
-
-
-
-            <div class="media-options">
-                <a href="#" class="field google">
-                    <i class='bx bxl-google google-icon'></i>
-                    <span>Login with Google</span>
-                </a>
-            </div>
-
         </div>
     </section>
 
@@ -106,14 +95,30 @@
     }
 
 <script>
-     $(document).ready(function () {
-    // AJAX login form submission
+    $(document).ready(function () {
+
+        function onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            console.log('Name: ' + profile.getName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            console.log('Email: ' + profile.getEmail());
+        }
+
+        function signOut() {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function () {
+                console.log('User signed out.');
+            });
+        }
+
+         // AJAX login form submission
+
     $('#loginForm').submit(function (event) {
         event.preventDefault(); // Prevent default form submission
         var formData = $(this).serialize(); // Serialize form data
 
         $.ajax({
-            url: '@Url.Action("LoginAsync", "Home")', 
+            url: '@Url.Action("LoginAsync", "Home")',
             type: 'POST',
             data: formData,
             success: function (response) {
@@ -163,7 +168,7 @@
             }
         });
     });
-});
+    });
 
 </script>
 
