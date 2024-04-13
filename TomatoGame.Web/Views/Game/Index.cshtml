@@ -1,5 +1,7 @@
 ﻿<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
 <div id="gameMode-div">
     <button id="easyBtn" type="button">Easy</button>
@@ -15,6 +17,7 @@
     <div id="buttonContainer"></div>
     <br>    <br>
     <button id="homeButton">Home</button>
+    <button id="LogOff">LogOff</button>
     <button id="scoreboardButton">Scoreboard</button>
 </div>
 
@@ -47,6 +50,13 @@
         if (scoreboardButton) {
             scoreboardButton.addEventListener('click', function () {
                 window.location.href = '/Score/Index';
+            });
+        }
+
+        var logOff = document.getElementById('LogOff');
+        if (logOff) {
+            logOff.addEventListener('click', function () {
+                window.location.href = '/Home/LogOffAsync';
             });
         }
     });
@@ -134,11 +144,20 @@
 
             if (tryCount >= 3) {
                 saveHighScore();
-                alert('Game Over.')
-                window.location.href = '/Game/Index';
+                playAudio();
             }
             else {
-                alert('Please Try Again.')
+                Toastify({
+
+                    text: "Please Try Again.",
+                    style: {
+                        background: "red",
+                    },
+                    duration: 3000
+
+                }).showToast();
+
+                //alert('Please Try Again.')
             }
           
         }
@@ -182,10 +201,25 @@
 
     function gameOver() {
         saveHighScore();
-        alert('Game Over.')
-        window.location.href = '/Game/Index';
+        playAudio();
     }
 
+    function playAudio() {
+        var audioUrl = 'https://commondatastorage.googleapis.com/codeskulptor-assets/sounddogs/explosion.mp3';
+        var audio = new Audio(audioUrl);
+
+        // Play the audio
+        audio.play().then(() => {
+            alert('Game Over.');
+            audio.onended = function () {
+                // Redirect after the audio has finished playing
+                window.location.href = '/Game/Index';
+            };
+        }).catch(e => {
+            console.log("Error playing the audio: ", e);
+            window.location.href = '/Game/Index';
+        });
+    }
 
 
 

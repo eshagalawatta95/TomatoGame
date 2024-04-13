@@ -8,6 +8,7 @@
     <title> Tomato Game </title>
 
     <!-- CSS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <link href="~/Content/Site.css" rel="stylesheet" />
     <!-- Boxicons CSS -->
@@ -15,17 +16,12 @@
 
 </head>
 <body>
-    @if (ViewData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger">@ViewData["ErrorMessage"]</div>
-    }
 
     <section class="container forms">
         <div class="form login">
             <div class="form-content">
                 <header>Login</header>
-                @using (Html.BeginForm("LoginAsync", "Home", FormMethod.Post))
-                {
+                <form id="loginForm">
                     <div class="field input-field">
                         @Html.TextBoxFor(m => m.Email, new { @placeholder = "Email", @class = "form-control" })
                     </div>
@@ -34,27 +30,23 @@
                         @Html.PasswordFor(m => m.Password, new { @placeholder = "Password", @class = "form-control" })
                     </div>
 
-                    <div class="form-link">
-                        <a href="#" class="forgot-pass">Forgot password?</a>
-                    </div>
-
                     <div class="field button-field">
                         <button type="submit">Login</button>
                     </div>
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                }
+                  
+                  </form>
 
-                <div class="form-link">
-                    <span>Don't have an account? <a href="#" class="link signup-link">Signup</a></span>
-                </div>
+                    <div class="form-link">
+                        <span>Don't have an account? <a href="#" class="link signup-link">Signup</a></span>
+                    </div>
             </div>
 
             <div class="line"></div>
             @using (Html.BeginForm("Login", "Google", FormMethod.Post))
             {
-              
+
                 <div class="media-options">
-                    <button type="submit">  <img src="#" alt="" class="google-img">Login with Google</button>
+                    <button type="submit"> Login with Google</button>
                 </div>
             }
 
@@ -65,8 +57,7 @@
         <div class="form signup">
             <div class="form-content">
                 <header>Signup</header>
-                @using (Html.BeginForm("SignUpAsync", "Home", FormMethod.Post))
-                {
+                <form id="signupForm">
                     <div class="field input-field">
                         @Html.TextBoxFor(m => m.Email, new { @placeholder = "Email", @class = "form-control" })
                     </div>
@@ -79,29 +70,27 @@
                         @Html.PasswordFor(m => m.Password, new { @placeholder = "Password", @class = "form-control" })
                         <i class='bx bx-hide eye-icon'></i>
                     </div>
-
+                    <div class="field input-field">
+                        @Html.PasswordFor(m => m.ConfirmPassword, new { @placeholder = "Confirm Password", @class = "form-control" })
+                        <i class='bx bx-hide eye-icon'></i>
+                    </div>
                     <div class="field button-field">
                         <button type="submit">Signup</button>
                     </div>
-                }
+                </form>
 
-                    <div class="form-link">
-                        <span>Already have an account? <a href="#" class="link login-link">Login</a></span>
-                    </div>
+                <div class="form-link">
+                    <span>Already have an account? <a href="#" class="link login-link">Login</a></span>
                 </div>
+            </div>
 
             <div class="line"></div>
 
-            <div class="media-options">
-                <a href="#" class="field facebook">
-                    <i class='bx bxl-facebook facebook-icon'></i>
-                    <span>Login with Facebook</span>
-                </a>
-            </div>
+
 
             <div class="media-options">
                 <a href="#" class="field google">
-                    <img src="#" alt="" class="google-img">
+                    <i class='bx bxl-google google-icon'></i>
                     <span>Login with Google</span>
                 </a>
             </div>
@@ -115,5 +104,68 @@
         @Scripts.Render("~/bundles/jquery")
         @Scripts.Render("~/bundles/jqueryval")
     }
+
+<script>
+     $(document).ready(function () {
+    // AJAX login form submission
+    $('#loginForm').submit(function (event) {
+        event.preventDefault(); // Prevent default form submission
+        var formData = $(this).serialize(); // Serialize form data
+
+        $.ajax({
+            url: '@Url.Action("LoginAsync", "Home")', 
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                if (response == true) {
+                    window.location.href = '/Game/Index';
+                }
+                else {
+                    alert('Username or password do not match. Please try again.');
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle error response
+                console.error('Login error:', error);
+            }
+        });
+    });
+
+    // AJAX signup form submission
+    $('#signupForm').submit(function (event) {
+        event.preventDefault(); // Prevent default form submission
+        var password = $('#Password').val();
+        var confirmPassword = $('#ConfirmPassword').val();
+
+        if (password !== confirmPassword) {
+            event.preventDefault(); // Stop form from submitting
+            alert('Passwords do not match. Please try again.');
+            return;
+        }
+
+        var formData = $(this).serialize(); // Serialize form data
+
+        $.ajax({
+            url: '@Url.Action("SignUpAsync", "Home")',
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                if (response == true) {
+                    window.location.href = '/Game/Index';
+                }
+                else {
+                    alert('Something is wrong. Please try again.');
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle error response
+                console.error('Signup error:', error);
+            }
+        });
+    });
+});
+
+</script>
+
 </body>
 </html>

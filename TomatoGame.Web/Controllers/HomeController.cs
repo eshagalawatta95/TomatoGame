@@ -2,7 +2,6 @@
 using System.Web.Mvc;
 using TomatoGame.Service.Dto;
 using TomatoGame.Service.Services;
-using TomatoGame.Storage;
 using TomatoGame.Web.Models;
 
 namespace TomatoGame.Web.Controllers
@@ -23,9 +22,8 @@ namespace TomatoGame.Web.Controllers
             return View();
         }
 
-
         [HttpPost]
-        public async Task<ActionResult> LoginAsync(UserSignInSignUpViewModal model)
+        public async Task<JsonResult> LoginAsync(UserSignInSignUpViewModal model)
         {
             bool isAuthenticated = await _authService.Login(new LoginDataDto()
             {
@@ -41,17 +39,15 @@ namespace TomatoGame.Web.Controllers
                 Session["UserName"] = user.Name.ToString();
                 Session["UserScore"] = user.LatestScore.ToString();
 
-                return RedirectToAction("Index", "Game");
+                return Json(true, JsonRequestBehavior.AllowGet);
             }
             else
             {
-                // Display an error message if login fails
-                ModelState.AddModelError("", "Invalid email or password");
-                return View("Index", model);
+                return Json(false, JsonRequestBehavior.AllowGet);
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<ActionResult> LogOffAsync()
         {
             //clear session variables
@@ -74,13 +70,12 @@ namespace TomatoGame.Web.Controllers
             if (isSignUpSucess)
             {
                 // Redirect to the dashboard or home page upon successful login
-                return RedirectToAction("Index", "Game");
+                return Json(true, JsonRequestBehavior.AllowGet);
             }
             else
             {
                 // Display an error message if login fails
-                ModelState.AddModelError("", "Invalid Data");
-                return View("Index", model);
+                return Json(false, JsonRequestBehavior.AllowGet);
             }
         }
     }
