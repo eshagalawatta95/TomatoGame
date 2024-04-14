@@ -149,24 +149,7 @@ form {
     justify-content: center;
 }
 
-a.facebook {
-    color: #fff;
-    background-color: #4267b2;
-}
 
-    a.facebook .facebook-icon {
-        height: 28px;
-        width: 28px;
-        color: #0171d3;
-        font-size: 20px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #fff;
-    }
-
-.facebook-icon,
 img.google-img {
     position: absolute;
     top: 50%;
@@ -195,3 +178,178 @@ a.google {
         padding: 20px 10px;
     }
 }
+
+
+/* Game Levels*/
+
+#gameMode-div {
+    display: flex; /* Enables flexbox */
+    justify-content: center; /* Center items horizontally */
+    align-items: center; /* Center items vertically */
+    flex-direction: column; /* Stack items vertically */
+    padding: 20px; /* Padding around the content */
+    background-color: #f2f2f2; /* Light gray background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+    width: 400px; /* Set a fixed width */
+    height: 300px; /* Set a fixed height */
+    margin: 20px auto; /* Center the div horizontally and give some margin */
+    margin-top:9%
+}
+
+
+.level {
+    width: 100%; /* Make each button fill the container width */
+    padding: 10px 20px; /* Padding inside the button */
+    margin-top: 10px; /* Space between buttons */
+    background-color: #007bff; /* Bootstrap blue */
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners for buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    outline: none; /* Remove focus outline */
+    font-size: 16px; /* Increase font size */
+}
+
+    .level:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+    }
+
+
+
+/*Score*/
+.half-page {
+    width: 50%; /* Width of the div */
+}
+
+/* Button styling remains the same */
+.home-button {
+    position: absolute; /* Position absolute to place it relative to nearest positioned ancestor */
+    right: 10px; /* Align to the right side */
+    top: 10px; /* Distance from the top */
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+/* Centering the container using Flexbox */
+div[style="width: 100%; display: flex; justify-content: center;"] {
+    display: flex; /* Enables Flexbox */
+    justify-content: center; /* Horizontally centers the child (half-page) within this div */
+}
+
+#buttonContainer {
+    justify-content: space-around; /* Evenly spaces the buttons horizontally */
+    align-items: center; /* Aligns items vertically in the center */
+    padding: 20px; /* Padding around the buttons */
+    text-align: center; /* Ensures text inside the buttons is centered */
+    width: 100%; /* Makes the container take the full width of its parent */
+
+}
+
+.btn-lg {
+    margin-left: 12px;
+    padding: 15px 30px; /* Generous padding to make buttons easier to tap on mobile */
+    font-size: 16px; /* Larger font size for better readability */
+    color: white; /* White text color */
+    background-color: #ff0094; /* Bootstrap's primary blue */
+    border: none; /* No borders */
+    border-radius: 5px; /* Rounded corners for a smoother look */
+    cursor: pointer; /* Cursor indicates clickable item */
+    outline: none; /* Removes the outline on focus */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+    .btn-lg:hover, .btn-lg:focus {
+        background-color: #0056b3; /* A darker shade of blue on hover/focus */
+    }
+
+    .btn-lg:active {
+        background-color: #004085; /* Even darker blue when the button is clicked */
+        transform: translateY(2px); /* Slight push down to mimic button press */
+    }
+
+
+
+button {
+    padding: 10px 20px; /* Adjust padding to fit the icon and text comfortably */
+    font-size: 16px; /* Larger text size for readability */
+    color: #ffffff; /* White text */
+    background-color: #007bff; /* Blue background, you can adjust this color */
+    border: none; /* No border for a clean look */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Indicates the element is clickable */
+    transition: background-color 0.3s; /* Smooth transition for hover effects */
+    margin: 5px; /* Spacing between buttons */
+}
+
+    button i {
+        margin-right: 5px; /* Space between the icon and text */
+    }
+
+    button:hover {
+        background-color: #0056b3; /* Darker shade on hover */
+    }
+
+    button:active {
+        background-color: #004085; /* Even darker when pressed */
+        transform: translateY(2px); /* Push down effect */
+    }
+
+
+#imageContainer {
+    display: flex;
+    justify-content: center; /* Horizontally center the content */
+    align-items: center; /* Vertically center the content */
+}
+
+    #imageContainer img {
+        border: 3px solid #ff0000; /* Example: red solid border */
+        padding: 5px; /* Optional: adds space around the image inside the border */
+        /* Other styles as needed */
+    }
+
+
+#timer {
+    position: fixed; /* Fixed position to stay in the same place even when scrolling */
+    top: 20px; /* Position from the top */
+    right: 20px; /* Position from the right */
+    background-color: #f8d7da; /* Light red background for visibility */
+    color: #721c24; /* Dark red text color for contrast */
+    padding: 10px 20px; /* Padding around the text */
+    border-radius: 8px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    z-index: 1000; /* Ensure it's above other elements */
+}
+
+
+#scoreDisplay {
+    background-color: #d8a8a8;
+    border: 1px solid #0b0a0a;
+    border-radius: 5px;
+    padding: 10px;
+    display: inline-block;
+    font-size: 16px;
+    color: #333;
+    margin-left: 12px;
+    margin-top: 12px;
+}
+
+
+#scoreHomeButton {
+    display: flex;
+    justify-content: space-between; /* Space between icon and text */
+    align-items: center; /* Align items vertically */
+}
+
+    #scoreHomeButton i {
+        margin-right: 5px; /* Adjust margin between icon and text */
+    }
+
+
+

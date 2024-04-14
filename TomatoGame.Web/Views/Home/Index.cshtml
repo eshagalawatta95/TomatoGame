@@ -6,7 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Tomato Game </title>
-
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <!-- CSS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
@@ -25,11 +26,11 @@
                 <header>Login</header>
                 <form id="loginForm">
                     <div class="field input-field">
-                        @Html.TextBoxFor(m => m.Email, new { @placeholder = "Email", @class = "form-control" })
+                        @Html.TextBoxFor(m => m.Email, new { @placeholder = "Enter Your Email", @class = "form-control" })
                     </div>
 
                     <div class="field input-field">
-                        @Html.PasswordFor(m => m.Password, new { @placeholder = "Password", @class = "form-control" })
+                        @Html.PasswordFor(m => m.LoginPassword, new { @placeholder = "Enter Password", @class = "form-control" })
                     </div>
 
                     <div class="field button-field">
@@ -45,7 +46,7 @@
 
             <div class="line"></div>
 
-            <div class="g-signin2" data-onsuccess="onSignIn" data-width="240" data-height="50" data-longtitle="true">
+            <div style="padding-left: 60px;" class="g-signin2" data-onsuccess="onSignIn" data-width="240" data-height="50" data-longtitle="true">
                 <button id="signinButton">Sign in with Google</button>
 
             </div>
@@ -59,19 +60,19 @@
                 <header>Signup</header>
                 <form id="signupForm">
                     <div class="field input-field">
-                        @Html.TextBoxFor(m => m.Email, new { @placeholder = "Email", @class = "form-control" })
+                        @Html.TextBoxFor(m => m.Email, new { @placeholder = "Enter Your Email", @class = "form-control" })
                     </div>
 
                     <div class="field input-field">
-                        @Html.PasswordFor(m => m.Name, new { @placeholder = "Name", @class = "form-control" })
+                        @Html.TextBoxFor(m => m.Name, new { @placeholder = "Enter Your Name", @class = "form-control" })
                     </div>
 
                     <div class="field input-field">
-                        @Html.PasswordFor(m => m.Password, new { @placeholder = "Password", @class = "form-control" })
+                        @Html.PasswordFor(m => m.Password, new { @placeholder = "Enter Password", @class = "form-control" })
                         <i class='bx bx-hide eye-icon'></i>
                     </div>
                     <div class="field input-field">
-                        @Html.PasswordFor(m => m.ConfirmPassword, new { @placeholder = "Confirm Password", @class = "form-control" })
+                        @Html.PasswordFor(m => m.ConfirmPassword, new { @placeholder = "Confirm Your Password", @class = "form-control" })
                         <i class='bx bx-hide eye-icon'></i>
                     </div>
                     <div class="field button-field">
@@ -126,7 +127,15 @@
                     window.location.href = '/Game/Index';
                 }
                 else {
-                    alert('Username or password do not match. Please try again.');
+                    Toastify({
+
+                        text: "The Username or Password does not match. Please try again.",
+                        style: {
+                            background: "red",
+                        },
+                        duration: 3000
+
+                    }).showToast();
                 }
             },
             error: function (xhr, status, error) {
@@ -139,12 +148,20 @@
     // AJAX signup form submission
     $('#signupForm').submit(function (event) {
         event.preventDefault(); // Prevent default form submission
-        var password = $('#Password').val();
+        var passwordText = $('#Password').val();
         var confirmPassword = $('#ConfirmPassword').val();
 
-        if (password !== confirmPassword) {
+        if (passwordText !== confirmPassword) {
             event.preventDefault(); // Stop form from submitting
-            alert('Passwords do not match. Please try again.');
+            Toastify({
+
+                text: "The Passwords does not match. Please try again.",
+                style: {
+                    background: "red",
+                },
+                duration: 3000
+
+            }).showToast();
             return;
         }
 
@@ -159,7 +176,15 @@
                     window.location.href = '/Game/Index';
                 }
                 else {
-                    alert('Something is wrong. Please try again.');
+                    Toastify({
+
+                        text: "Something is wrong. Please try again.",
+                        style: {
+                            background: "red",
+                        },
+                        duration: 3000
+
+                    }).showToast();
                 }
             },
             error: function (xhr, status, error) {

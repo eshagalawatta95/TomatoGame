@@ -2,23 +2,28 @@
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<link href="~/Content/Site.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <div id="gameMode-div">
-    <button id="easyBtn" type="button">Easy</button>
-    <button id="mediumBtn" type="button">Medium</button>
-    <button id="hardBtn" type="button">Hard</button>
-
+    <h3>Levels Of Game</h3> <hr>
+    <button id="easyBtn" style="background-color: #dcd43a" class="level" type="button">Easy Level</button>
+    <button id="mediumBtn" style="background-color: #33ff00;" class="level" type="button">Medium Level</button>
+    <button id="hardBtn" style="background-color: #ff0049;" class="level" type="button">Hard Level</button>
 </div>
+<button id="scoreboardButton"><i class="fas fa-trophy"></i> Scoreboard</button>
 
 <div id="gameArea-div" style="display: none;">
     <div id="timer"></div>
     <div id="scoreDisplay"></div>
     <div id="imageContainer"></div>
+
     <div id="buttonContainer"></div>
     <br>    <br>
-    <button id="homeButton">Home</button>
-    <button id="LogOff">LogOff</button>
-    <button id="scoreboardButton">Scoreboard</button>
+    <button id="homeButton"><i class="fas fa-home"></i> Home</button>
+    <button id="LogOff"><i class="fas fa-sign-out-alt"></i> LogOff</button>
+    <button id="scoreboardButton"><i class="fas fa-trophy"></i> Scoreboard</button>
+
 </div>
 
 <script>
@@ -95,7 +100,7 @@
         var btn = response.Solutions;
         btn.forEach(function (button) {
             // Create a new button element
-            var newButton = $('<button class="btn-lg" onclick = CheckAnswer(' + button.IsCorrectAnswer +')>' + button.Answer +'</button>', {
+            var newButton = $('<button class="btn-lg" onclick = CheckAnswer(' + button.IsCorrectAnswer + ')>' + button.Answer + '</button>', {
             });
             $('#buttonContainer').append(newButton);
         });
@@ -103,41 +108,65 @@
 
     function CheckAnswer(isCorrect) {
         if (isCorrect) {
-            alert('Answer Correct!!!')
-            var scoreAsString = localStorage.getItem('score');
 
-            // Convert the score string to a number
-            var score = parseInt(scoreAsString, 10);
+            var audioUrl = 'https://commondatastorage.googleapis.com/codeskulptor-assets/sounddogs/explosion.mp3';
+            var audio = new Audio(audioUrl);
 
-            // Check if the conversion was successful (not NaN)
-            if (!isNaN(score)) {
-                // Add 10 to the score
-                score += 10;
-            }
+            // Play the audio
+            audio.play().then(() => {
+                Toastify({
 
-            localStorage.setItem('score', score);
-            localStorage.setItem('tryCount', 0);
+                    text: "Answer Correct!!!",
+                    style: {
+                        background: "green",
+                    },
+                    duration: 3000
 
-            var scoreDisplayElement = document.getElementById('scoreDisplay');
-            if (scoreDisplayElement) {
-                scoreDisplayElement.textContent = 'Score: ' + score;
-            }
+                }).showToast();
 
-            var gameMode = localStorage.getItem('gameMode');
-            $.ajax({
-                url: '/Game/Start',
-                type: 'GET',
-                data: { mode: gameMode },
-                success: function (response) {
-                    drawQuestionAndAnswers(response);
-                },
-                error: function (xhr, status, error) {
-                    console.error(xhr.responseText);
-                }
+
+                audio.onended = function () {
+                    var scoreAsString = localStorage.getItem('score');
+
+                    // Convert the score string to a number
+                    var score = parseInt(scoreAsString, 10);
+
+                    // Check if the conversion was successful (not NaN)
+                    if (!isNaN(score)) {
+                        // Add 10 to the score
+                        score += 10;
+                    }
+
+                    localStorage.setItem('score', score);
+                    localStorage.setItem('tryCount', 0);
+
+                    var scoreDisplayElement = document.getElementById('scoreDisplay');
+                    if (scoreDisplayElement) {
+                        scoreDisplayElement.textContent = 'Score: ' + score;
+                    }
+
+                    var gameMode = localStorage.getItem('gameMode');
+                    $.ajax({
+                        url: '/Game/Start',
+                        type: 'GET',
+                        data: { mode: gameMode },
+                        success: function (response) {
+                            drawQuestionAndAnswers(response);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(xhr.responseText);
+                        }
+                    });
+                };
+            }).catch(e => {
+                console.log("Error playing the audio: ", e);
+                window.location.href = '/Game/Index';
             });
+
+
         }
         else {
-          
+
             var tryCount = localStorage.getItem('tryCount');
             tryCount++
             localStorage.setItem('tryCount', tryCount);
@@ -156,10 +185,8 @@
                     duration: 3000
 
                 }).showToast();
-
-                //alert('Please Try Again.')
             }
-          
+
         }
     }
 
@@ -210,7 +237,16 @@
 
         // Play the audio
         audio.play().then(() => {
-            alert('Game Over.');
+            Toastify({
+
+                text: "Game Over.",
+                style: {
+                    background: "red",
+                },
+                duration: 3000
+
+            }).showToast();
+
             audio.onended = function () {
                 // Redirect after the audio has finished playing
                 window.location.href = '/Game/Index';

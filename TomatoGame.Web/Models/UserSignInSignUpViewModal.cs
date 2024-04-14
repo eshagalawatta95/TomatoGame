@@ -9,6 +9,7 @@ namespace TomatoGame.Web.Models
     public class UserSignInSignUpViewModal
     {
         public string Email { get; set; }
+        public string LoginPassword { get; set; }
 
         public string Password { get; set; }
 

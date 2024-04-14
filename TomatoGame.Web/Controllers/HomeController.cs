@@ -28,7 +28,7 @@ namespace TomatoGame.Web.Controllers
             bool isAuthenticated = await _authService.Login(new LoginDataDto()
             {
                 Email = model.Email,
-                Password = model.Password,
+                Password = model.LoginPassword,
             });
 
             if (isAuthenticated)

@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.Text;
 using System.Threading.Tasks;
 using TomatoGame.Service.Dto;
-using TomatoGame.Service.Enum;
 using TomatoGame.Storage;
 
 namespace TomatoGame.Service.Services
@@ -58,7 +55,6 @@ namespace TomatoGame.Service.Services
                 existingScore.LatestScore = score.LatestScore;
                 existingScore.UpdatedTime = score.UpdatedDate;
                 _context.Scores.AddOrUpdate(existingScore);
-                await _context.SaveChangesAsync();
             }
             else
             {
@@ -67,10 +63,11 @@ namespace TomatoGame.Service.Services
                     Mode = (int)score.Mode,
                     UserId = score.UserId,
                     UpdatedTime = score.UpdatedDate,
+                    LatestScore= score.LatestScore,
                 };
-                _context.Scores.Add(newScore);
-                await _context.SaveChangesAsync();
+                _context.Scores.AddOrUpdate(newScore);
             }
+            await _context.SaveChangesAsync();
             return true;
         }
 
