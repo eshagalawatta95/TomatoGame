@@ -65,7 +65,7 @@ namespace TomatoGame.Service.Services
                     UpdatedTime = score.UpdatedDate,
                     LatestScore = score.LatestScore,
                 };
-                _context.Scores.AddOrUpdate(newScore);
+                _context.Scores.Add(newScore);
             }
             await _context.SaveChangesAsync();
             return true;
