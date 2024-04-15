@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TomatoGame.Service.Dto;
 using TomatoGame.Storage;
 
 namespace TomatoGame.Service.Services
 {
-    public class UserService: IUserService
+    public class UserService : IUserService
     {
-        private readonly GameDbContext _context; 
+        private readonly GameDbContext _context;
         private readonly IScoreService _scoreService;
 
         public UserService(GameDbContext context, IScoreService scoreService)
@@ -58,11 +56,17 @@ namespace TomatoGame.Service.Services
                 {
                     Id = u.Id,
                     Name = u.Name,
-                    LatestScore= score.LatestScore
+                    LatestScore = score.LatestScore
                 })
                 .FirstOrDefaultAsync();
 
             return user;
+        }
+
+        public async Task<bool> IsUserExists(string email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(s => s.Email == email);
+            return user != null;
         }
     }
 }

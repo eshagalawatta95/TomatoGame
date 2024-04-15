@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TomatoGame.Service.Dto;
 using TomatoGame.Service.Utils;
@@ -14,6 +10,7 @@ namespace TomatoGame.Service.Services
     public class AuthService : IAuthService
     {
         private readonly GameDbContext _context;
+
         public AuthService(GameDbContext context)
         {
             _context = context;

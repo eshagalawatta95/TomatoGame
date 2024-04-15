@@ -13,11 +13,10 @@ namespace TomatoGame.Service.Services
 {
     public class GameService : IGameService
     {
-        private readonly int _wrongAnswerCount = 3;
+        private const int _wrongAnswerCount = 3;
 
         public async Task<GameDataDto> Start(GameMode mode)
         {
-            //initially we set try count as 1
             return await StartgameAsync(mode);
         }
 
@@ -64,7 +63,7 @@ namespace TomatoGame.Service.Services
         {
             var solutions = new List<SolutionDataDto>
             {
-                // Add correct answer
+                // Add correct answer to solution list
                 new SolutionDataDto
                 {
                     Answer = solution,
@@ -74,33 +73,46 @@ namespace TomatoGame.Service.Services
 
             // Add wrong answers
             solutions.AddRange(ConstructWrongAnswers(solution));
+            Shuffle(solutions); //shuffle solution list
+
             return solutions;
+        }
+
+        private void Shuffle(List<SolutionDataDto> solutionDataDto)
+        {
+            // Shuffle the solutionsVm list using Fisher-Yates shuffle algorithm
+            var rng = new Random();
+            int n = solutionDataDto.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                var value = solutionDataDto[k];
+                solutionDataDto[k] = solutionDataDto[n];
+                solutionDataDto[n] = value;
+            }
         }
 
         private List<SolutionDataDto> ConstructWrongAnswers(int solution)
         {
-            var wrongAnswers = new List<SolutionDataDto>();
             var exclude = new HashSet<int> { solution };
-
             Random rand = new Random();
 
-            while (wrongAnswers.Count < _wrongAnswerCount)
-            {
-                int randomAnswer = rand.Next(1, 21); // Generate a random number between 1 and 20
+            // Generate a sequence of random numbers between 1 and 21 excluding solution value
+            var randomNumbers = Enumerable.Range(1, 20)
+                                        .Where(num => !exclude.Contains(num))
+                                        .OrderBy(_ => rand.Next())
+                                        .Take(_wrongAnswerCount);
 
-                if (!exclude.Contains(randomAnswer))
-                {
-                    wrongAnswers.Add(new SolutionDataDto
-                    {
-                        Answer = randomAnswer,
-                        IsCorrectAnswer = false
-                    });
-                    exclude.Add(randomAnswer);
-                }
-            }
+            // Create SolutionDataDto objects from the random numbers
+            var wrongAnswers = randomNumbers.Select(randomNum => new SolutionDataDto
+            {
+                Answer = randomNum,
+                IsCorrectAnswer = false
+            }).ToList();
 
             return wrongAnswers;
         }
     }
 
-    }
+}

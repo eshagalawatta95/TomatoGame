@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using TomatoGame.Service.Dto;
@@ -10,7 +11,7 @@ using TomatoGame.Web.Models;
 
 namespace TomatoGame.Web.Controllers
 {
-    [SessionAuthorize("UserID")]
+    [SessionAuthorize("UserID")] //authentication
     public class GameController : Controller
     {
         private readonly IGameService _gameService;
@@ -30,7 +31,7 @@ namespace TomatoGame.Web.Controllers
         [HttpGet]
         public async Task<JsonResult> Start(GameMode mode)
         {
-            var gameData = await GameAction(mode);
+            var gameData = await StartGame(mode);
             return Json(gameData, JsonRequestBehavior.AllowGet);
         }
 
@@ -49,7 +50,7 @@ namespace TomatoGame.Web.Controllers
             _scoreService.UpdateScore(score);
         }
 
-        private async Task<GameDataViewModel> GameAction(GameMode gameMode)
+        private async Task<GameDataViewModel> StartGame(GameMode gameMode)
         {
             var gameData = await _gameService.Start(gameMode);
             var vm = new GameDataViewModel()
@@ -85,35 +86,11 @@ namespace TomatoGame.Web.Controllers
                 throw new ArgumentNullException(nameof(solutions));
             }
 
-            var solutionsVm = new List<SolutionViewModel>();
-
-            foreach (var solutionDto in solutions)
+            return solutions.Select(solutionDto => new SolutionViewModel
             {
-                var solutionVm = new SolutionViewModel
-                {
-                    Answer = solutionDto.Answer,
-                    IsCorrectAnswer = solutionDto.IsCorrectAnswer
-                };
-
-                solutionsVm.Add(solutionVm);
-            }
-            Shuffle(solutionsVm);
-            return solutionsVm;
-        }
-
-        private void Shuffle(List<SolutionViewModel> solutionsVm)
-        {
-            // Shuffle the solutionsVm list using Fisher-Yates shuffle algorithm
-            Random rng = new Random();
-            int n = solutionsVm.Count;
-            while (n > 1)
-            {
-                n--;
-                int k = rng.Next(n + 1);
-                SolutionViewModel value = solutionsVm[k];
-                solutionsVm[k] = solutionsVm[n];
-                solutionsVm[n] = value;
-            }
+                Answer = solutionDto.Answer,
+                IsCorrectAnswer = solutionDto.IsCorrectAnswer
+            }).ToList();
         }
 
         private string ToBase64String(string base64String)

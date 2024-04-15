@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using TomatoGame.Service.Dto;
 
@@ -14,5 +11,7 @@ namespace TomatoGame.Service.Services
         Task<UserProfileDto> GetUser(string email);
 
         Task<UserProfileDto> GetUser(int userId);
+
+        Task<bool> IsUserExists(string email);
     }
 }

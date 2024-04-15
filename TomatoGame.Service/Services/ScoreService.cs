@@ -29,16 +29,16 @@ namespace TomatoGame.Service.Services
             var user = await _context.Users.FirstOrDefaultAsync(s => s.Email == email);
             if (user != null)
             {
-                var scores = await ReadScoreTable().ToListAsync();
+                var scores = ReadScoreTable();
                 var userScore = scores.FirstOrDefault(x => x.UserId == user.Id);
-                if (userScore == null)
+                if (userScore == null) //not played yet
                 {
                     return new ScoreDto()
                     {
-                        LatestScore= 0,
-                        UserId= user.Id,
-                        UserName= user.Name,
-                        UserEmail= email,
+                        LatestScore = 0,
+                        UserId = user.Id,
+                        UserName = user.Name,
+                        UserEmail = email,
                     };
                 }
                 return userScore;
@@ -49,7 +49,7 @@ namespace TomatoGame.Service.Services
         public async Task<bool> UpdateScore(ScoreDto score)
         {
             var existingScore = await _context.Scores
-                            .FirstOrDefaultAsync(s => s.UserId == score.UserId && s.Mode == (int)score.Mode);
+                                     .FirstOrDefaultAsync(s => s.UserId == score.UserId && s.Mode == (int)score.Mode);
             if (existingScore != null)
             {
                 existingScore.LatestScore = score.LatestScore;
@@ -63,7 +63,7 @@ namespace TomatoGame.Service.Services
                     Mode = (int)score.Mode,
                     UserId = score.UserId,
                     UpdatedTime = score.UpdatedDate,
-                    LatestScore= score.LatestScore,
+                    LatestScore = score.LatestScore,
                 };
                 _context.Scores.AddOrUpdate(newScore);
             }
@@ -71,9 +71,9 @@ namespace TomatoGame.Service.Services
             return true;
         }
 
-        public async Task<ScoreDto> GetHighScoreAsync()
+        public ScoreDto GetHighScore()
         {
-            var scores = await ReadScoreTable().ToListAsync();
+            var scores = ReadScoreTable();
             var highScore = scores.FirstOrDefault();
             return highScore;
         }
@@ -89,11 +89,10 @@ namespace TomatoGame.Service.Services
                              UserName = user.Name,
                              Id = score.Id,
                              Mode = (Enum.GameMode)score.Mode,
-                             UpdatedDate = score.UpdatedTime
+                             UpdatedDate = score.UpdatedTime,
+                             UserId = user.Id
                          };
-
             return scores;
         }
-
     }
 }

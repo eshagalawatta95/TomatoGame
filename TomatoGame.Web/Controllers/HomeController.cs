@@ -27,28 +27,34 @@ namespace TomatoGame.Web.Controllers
         {
             bool isAuthenticated = await _authService.Login(new LoginDataDto()
             {
-                Email = model.Email,
+                Email = model.LoginEmail,
                 Password = model.LoginPassword,
             });
 
             if (isAuthenticated)
             {
-                // Redirect to the dashboard or home page upon successful login
-                var user = await _userService.GetUser(model.Email);
+                var user = await _userService.GetUser(model.LoginEmail);
                 Session["UserID"] = user.Id.ToString();
                 Session["UserName"] = user.Name.ToString();
                 Session["UserScore"] = user.LatestScore.ToString();
 
-                return Json(true, JsonRequestBehavior.AllowGet);
+                return Json(true);
             }
             else
             {
-                return Json(false, JsonRequestBehavior.AllowGet);
+                return Json(false);
             }
         }
 
         [HttpGet]
-        public async Task<ActionResult> LogOffAsync()
+        public async Task<JsonResult> IsUserExists(string email)
+        {
+            var isExists = await _userService.IsUserExists(email);
+            return Json(isExists, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult LogOff()
         {
             //clear session variables
             Session["UserID"] = string.Empty;
@@ -67,16 +73,7 @@ namespace TomatoGame.Web.Controllers
                 Name = model.Name,
             });
 
-            if (isSignUpSucess)
-            {
-                // Redirect to the dashboard or home page upon successful login
-                return Json(true, JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                // Display an error message if login fails
-                return Json(false, JsonRequestBehavior.AllowGet);
-            }
+            return Json(isSignUpSucess);
         }
     }
 }

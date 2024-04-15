@@ -27,7 +27,9 @@ namespace TomatoGame.Web.Handlers
                     ViewName = ex.GetType().ToString(),
                     ViewData = new ViewDataDictionary(filterContext.Controller.ViewData)
                     {
-                        Model = new HandleErrorInfo(ex, filterContext.RouteData.Values["controller"].ToString(), filterContext.RouteData.Values["action"].ToString())
+                        Model = new HandleErrorInfo
+                        (ex, filterContext.RouteData.Values["controller"].ToString(), 
+                                        filterContext.RouteData.Values["action"].ToString())
                     }
                 };
             }

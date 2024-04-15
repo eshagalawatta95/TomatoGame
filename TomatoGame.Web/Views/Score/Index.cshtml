@@ -1,14 +1,16 @@
 ﻿@model List<TomatoGame.Web.Models.ScoreViewModel>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" />
 <link href="~/Content/Site.css" rel="stylesheet" />
-<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
 @{
     ViewBag.Title = "Score";
     int rank = 1;
 }
+
 <h2 style=" text-align: center;">Scores</h2>
 
 <div style="width: 100%; display: flex; justify-content: center; margin-top: 5%;">
@@ -47,22 +49,14 @@
         }
     </div>
 </div>
+
 <button class="scoreHomeButton" id="homeButton"><i class="fas fa-home"></i> Home</button>
 
 
-
-
-
-<script>
-    $(document).ready(function () {
-        $('#scoreTbl').DataTable({
-
-        });
-        var homeButton = document.getElementById('homeButton');
-        if (homeButton) {
-            homeButton.addEventListener('click', function () {
-                window.location.href = '/Game/Index';
-            });
-        }
-    });
-</script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+<script src="~/Scripts/score.js"></script>

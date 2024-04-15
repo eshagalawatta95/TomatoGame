@@ -1,13 +1,6 @@
 using Autofac;
 using Autofac.Integration.Mvc;
-using Microsoft.Owin.Logging;
-using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
-using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -22,7 +15,6 @@ namespace TomatoGame.Web
     {
         protected void Application_Start()
         {
-            // Configure Serilog logger
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
