@@ -196,9 +196,27 @@ a.google {
     width: 400px; /* Set a fixed width */
     height: 300px; /* Set a fixed height */
     margin: 20px auto; /* Center the div horizontally and give some margin */
-    margin-top: 9%
+    margin-top: 9%;
+    background-image: url('../imgs/1.jpg');
+    background-repeat: no-repeat; /* Prevent background image from repeating */
+    background-size: cover;
 }
 
+.score-body {
+    background-image: url('../imgs/2.jpg');
+    background-repeat: no-repeat; /* Prevent background image from repeating */
+    background-size: cover;
+    color: white;
+}
+#scoreTbl {
+    color: white;
+}
+
+#gameArea-div {
+    background-image: url('../imgs/4.jpg');
+    background-repeat: no-repeat; /* Prevent background image from repeating */
+    background-size: cover;
+}
 
 .level {
     width: 100%; /* Make each button fill the container width */
@@ -330,8 +348,7 @@ button {
 
 
 #scoreDisplay {
-    background-color: #d8a8a8;
-    border: 1px solid #0b0a0a;
+    background-color: #f8d7da;
     border-radius: 5px;
     padding: 10px;
     display: inline-block;
@@ -339,6 +356,7 @@ button {
     color: #333;
     margin-left: 12px;
     margin-top: 12px;
+    font-weight:bold
 }
 
 

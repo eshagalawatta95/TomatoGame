@@ -10,7 +10,7 @@ namespace TomatoGame.Storage
 
         public int Mode { get; set; }
 
-        public double LatestScore { get; set; }
+        public int LatestScore { get; set; }
 
         public DateTime UpdatedTime { get; set; }
     }

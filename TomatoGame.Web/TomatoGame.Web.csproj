@@ -227,6 +227,10 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Imgs\1.jpg" />
+    <Content Include="Imgs\2.jpg" />
+    <Content Include="Imgs\3.jpg" />
+    <Content Include="Imgs\4.jpg" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />

@@ -79,7 +79,7 @@ function drawQuestionAndAnswers(response) {
 
 function CheckAnswer(isCorrect) {
     if (isCorrect) {
-        var audioUrl = 'https://commondatastorage.googleapis.com/codeskulptor-assets/sounddogs/explosion.mp3';
+        var audioUrl = 'http://codeskulptor-demos.commondatastorage.googleapis.com/descent/gotitem.mp3';
         var audio = new Audio(audioUrl);
 
         // Play the audio
@@ -160,17 +160,20 @@ function CheckAnswer(isCorrect) {
 function saveHighScore() {
     var gameMode = localStorage.getItem('gameMode');
     var score = localStorage.getItem('score');
-
+    var result;
     $.ajax({
-        url: '/Game/SaveHighScore',
+        url: '/Game/SaveHighScoreAsync',
         type: 'PoST',
         data: { mode: gameMode, scoreValue: score },
         success: function (response) {
+            result = response;
         },
         error: function (xhr, status, error) {
             console.error(xhr.responseText);
         }
     });
+
+    return result;
 }
 
 function startGameTimer(durationInMinutes) {

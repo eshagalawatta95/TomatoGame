@@ -49,12 +49,11 @@ namespace TomatoGame.Service.Services
         public async Task<bool> UpdateScore(ScoreDto score)
         {
             var existingScore = await _context.Scores
-                                     .FirstOrDefaultAsync(s => s.UserId == score.UserId && s.Mode == (int)score.Mode);
+                                    .FirstOrDefaultAsync(s => s.UserId == score.UserId && s.Mode == (int)score.Mode);
             if (existingScore != null)
             {
-                existingScore.LatestScore = score.LatestScore;
+                existingScore.LatestScore = (int)score.LatestScore;
                 existingScore.UpdatedTime = score.UpdatedDate;
-                _context.Scores.AddOrUpdate(existingScore);
             }
             else
             {
@@ -63,13 +62,14 @@ namespace TomatoGame.Service.Services
                     Mode = (int)score.Mode,
                     UserId = score.UserId,
                     UpdatedTime = score.UpdatedDate,
-                    LatestScore = score.LatestScore,
+                    LatestScore = (int)score.LatestScore,
                 };
                 _context.Scores.Add(newScore);
             }
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // Save changes asynchronously
             return true;
         }
+
 
         public ScoreDto GetHighScore()
         {

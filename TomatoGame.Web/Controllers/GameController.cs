@@ -36,7 +36,7 @@ namespace TomatoGame.Web.Controllers
         }
 
         [HttpPost]
-        public void SaveHighScore(GameMode mode, int scoreValue)
+        public async Task<bool> SaveHighScoreAsync(GameMode mode, int scoreValue)
         {
             int userId = 0;
             int.TryParse(Session["UserID"].ToString(), out userId);
@@ -45,9 +45,10 @@ namespace TomatoGame.Web.Controllers
                 LatestScore = scoreValue,
                 Mode = mode,
                 UserId = userId,
-                UpdatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.Now,
             };
-            _scoreService.UpdateScore(score);
+             var result = await _scoreService.UpdateScore(score);
+            return result;
         }
 
         private async Task<GameDataViewModel> StartGame(GameMode gameMode)

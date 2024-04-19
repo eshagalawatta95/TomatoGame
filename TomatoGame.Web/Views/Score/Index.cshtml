@@ -10,53 +10,53 @@
     ViewBag.Title = "Score";
     int rank = 1;
 }
+<body class="score-body">
+    <h2 style=" text-align: center;">Scores</h2>
 
-<h2 style=" text-align: center;">Scores</h2>
-
-<div style="width: 100%; display: flex; justify-content: center; margin-top: 5%;">
-    <!-- Flexbox to center child -->
-    <div class="half-page">
-        @if (Model.Count == 0)
-        {
-            <h5>No any scores</h5>
-        }
-        else
-        {
-            <table id="scoreTbl" class="table">
-                <thead>
-                    <tr>
-                        <th width="20px">Rank</th>
-                        <th width="120px">Name</th>
-                        <th width="50px">Mode</th>
-                        <th width="50px">Score</th>
-                        <th>Last Updated</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
+    <div id="score-div" style="width: 100%; display: flex; justify-content: center; margin-top: 5%;">
+        <!-- Flexbox to center child -->
+        <div class="half-page">
+            @if (Model.Count == 0)
+            {
+                <h5>No any scores</h5>
+            }
+            else
+            {
+                <table id="scoreTbl" class="table">
+                    <thead>
                         <tr>
-                            <td>@rank</td>
-                            <td>@item.UserName</td>
-                            <td>@item.Mode</td>
-                            <td>@item.LatestScore</td>
-                            <td>@item.UpdatedDate</td>
+                            <th width="20px">Rank</th>
+                            <th width="120px">Name</th>
+                            <th width="50px">Mode</th>
+                            <th width="50px">Score</th>
+                            <th>Last Updated</th>
                         </tr>
-                        rank++;
-                    }
-                </tbody>
-            </table>
-        }
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@rank</td>
+                                <td>@item.UserName</td>
+                                <td>@item.Mode</td>
+                                <td>@item.LatestScore</td>
+                                <td>@item.UpdatedDate</td>
+                            </tr>
+                            rank++;
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
     </div>
-</div>
 
-<button class="scoreHomeButton" id="homeButton"><i class="fas fa-home"></i> Home</button>
+    <button class="scoreHomeButton" id="homeButton"><i class="fas fa-home"></i> Home</button>
+    </body>
 
-
-@section Scripts {
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/jqueryval")
-}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
-<script src="~/Scripts/score.js"></script>
+    @section Scripts {
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/jqueryval")
+    }
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+    <script src="~/Scripts/score.js"></script>
